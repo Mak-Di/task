@@ -1,6 +1,7 @@
 <?php
 
 use Phalcon\Mvc\Model\Validator\Email as Email;
+use Phalcon\Mvc\Model\Query\Builder;
 
 class Employees extends \Phalcon\Mvc\Model
 {
@@ -57,7 +58,7 @@ class Employees extends \Phalcon\Mvc\Model
      *
      * @var integer
      */
-    public $parenId;
+    public $parentId;
 
     /**
      * Validations and business logic
@@ -152,5 +153,59 @@ class Employees extends \Phalcon\Mvc\Model
     public function isChief()
     {
         return (bool)$this->isChief;
+    }
+
+    /**
+     * @return Builder
+     */
+    public static function findWithChiefName()
+    {
+        $queryBuilder = new Builder();
+        return $queryBuilder
+            ->from('Employees')
+            ->columns([
+                'id' => 'Employees.id',
+                'firstName' => 'Employees.firstName',
+                'lastName' => 'Employees.lastName',
+                'position' => 'Employees.position',
+                'email' => 'Employees.email',
+                'phone' => 'Employees.phone',
+                'note' => 'Employees.note',
+                'chiefName' => 'CONCAT(e.firstName, " ", e.lastName)'
+            ])
+            ->leftJoin('Employees', 'Employees.parentId = e.id', 'e');
+    }
+
+    /**
+     * Set Chief flag if need it
+     */
+    public function afterCreate()
+    {
+        $parent = Employees::findFirst($this->parentId);
+        $parent->isChief = 1;
+        $parent->save();
+    }
+
+    /**
+     * Set / un set chief flag before update
+     */
+    public function beforeUpdate()
+    {
+        $fromDB = Employees::findFirst($this->id);
+        if ($fromDB->parentId != $this->parentId) {
+            $children = Employees::getChildren($fromDB->parentId);
+            $parent = Employees::findFirst($fromDB->parentId);
+            if ($parent) {
+                if (count($children) == 1) {
+                    $parent->isChief = 0;
+                    $parent->save();
+                }
+            } else {
+                $parent = Employees::findFirst($this->parentId);
+                $parent->isChief = 1;
+                $parent->save();
+            }
+
+        }
     }
 }

@@ -10,10 +10,10 @@ class Employee extends Form
 {
     public function initialize()
     {
-        $firstName = new Text('first_name', ['placeholder' => 'First name', 'required' => true]);
+        $firstName = new Text('firstName', ['placeholder' => 'First name', 'required' => true]);
         $this->add($firstName);
 
-        $lastName = new Text('last_name', ['placeholder' => 'Last name', 'required' => true]);
+        $lastName = new Text('lastName', ['placeholder' => 'Last name', 'required' => true]);
         $this->add($lastName);
 
         $position = new Text('position', ['placeholder' => 'Position']);
@@ -30,12 +30,15 @@ class Employee extends Form
 
         // TODO Autocomplete implementation put here
         $parentId = new Select(
-            'parent_id',
+
+            'parentId',
             Employees::find(['columns' => "id, CONCAT(firstName, ' ', lastName) as fullName"]),
-            ['using' => [
-                'id',
-                'fullName'
-            ]]);
+            [
+                'using' => ['id', 'fullName'],
+                'useEmpty' => true,
+                'emptyValue' => 0
+            ]
+            );
         $this->add($parentId);
     }
 }
