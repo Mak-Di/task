@@ -22,7 +22,7 @@
             <td>{{ item.note | e }}</td>
             <td>{{ item.chiefName | e }}</td>
             <td>{{ link_to('employee/edit/' ~ item.id ~ '/' ~ paginator.current, 'Edit') }}</td>
-            <td>Not available</td>
+            <td>{{ link_to('employee/remove/' ~ item.id ~ '/' ~ paginator.current, 'Remove') }}</td>
         </tr>
     {% endfor %}
 </table>

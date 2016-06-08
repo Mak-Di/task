@@ -121,4 +121,19 @@ class EmployeeController extends \Phalcon\Mvc\Controller
             }
         }        
     }
+
+    /**
+     * Remove employee entity without confirmation
+     * 
+     * @param int $employeeId
+     * @param int $page
+     */
+    public function removeAction($employeeId = 0, $page = 0)
+    {
+        $employee = Employees::findFirst($employeeId);
+        if ($employee)
+            $employee->delete();
+
+        $this->response->redirect('employee/show/' . $page);
+    }
 }
