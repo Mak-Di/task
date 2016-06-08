@@ -1,8 +1,10 @@
-<div class="errorMsg">
-    {% for error in errorMsg %}
-        {{ error.getMessage() }}
-    {% endfor %}
-</div>
+{% if errorMsg IS DEFINED %}
+    <div class="errorMsg">
+        {% for error in errorMsg %}
+            {{ error.getMessage() }}
+        {% endfor %}
+    </div>
+{% endif %}
 {{ form('employee/add', 'method': 'post') }}
     {{ form.render('firstName') }} <br>
     {{ form.render('lastName') }} <br>
