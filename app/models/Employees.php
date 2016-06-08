@@ -145,4 +145,12 @@ class Employees extends \Phalcon\Mvc\Model
     {
         return parent::findByParentId($parentId);
     }
+
+    /**
+     * @return bool
+     */
+    public function isChief()
+    {
+        return (bool)$this->isChief;
+    }
 }

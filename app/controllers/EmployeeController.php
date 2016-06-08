@@ -1,11 +1,41 @@
 <?php
 
+use Phalcon\Escaper;
+
 class EmployeeController extends \Phalcon\Mvc\Controller
 {
-
     public function indexAction()
     {
-        //TODO Tree view implementation put here 
+        $this->assets
+            ->addJs('js/jquery.easytree.min.js')
+            ->addJs('js/treeview.js')
+            ->addCss('css/ui.easytree.css');
+    }
+
+    public function treeviewAction($parentId = 0)
+    {
+        $employeeArray = [];
+        $this->view->disable();
+        $response = new \Phalcon\Http\Response();
+        $escaper = new Escaper();
+        $response->setContentType('application/json', 'UTF-8');
+
+        /**
+         * @var $employee Employees
+         */
+        foreach (Employees::getChildren($parentId) as $employee) {
+            $employeeArray[] = [
+                'isActive' => false,
+                'isFolder' => $employee->isChief(),
+                'isExpanded' => $employee->isChief(),
+                'isLazy' => true,
+                'text' => $escaper->escapeHtml($employee->firstName.' ' . $employee->lastName),
+                'lazyUrl' => '/employee/treeview/' . $employee->id
+            ];
+        }
+
+        $response->setContent(json_encode($employeeArray));
+        return $response;
     }
 
     public function addAction()
