@@ -137,12 +137,12 @@ class Employees extends \Phalcon\Mvc\Model
 
     /**
      * Get children
-     * 
-     * @param int $parent_id
+     *
+     * @param int $parentId
      * @return mixed
      */
-    public static function getChildren($parent_id = 0)
+    public static function getChildren($parentId = 0)
     {
-        return parent::findByParentId($parent_id);
+        return parent::findByParentId($parentId);
     }
 }
