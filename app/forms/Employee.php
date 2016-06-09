@@ -28,17 +28,7 @@ class Employee extends Form
         $note = new TextArea('note', ['placeholder' => 'Note']);
         $this->add($note);
 
-        // TODO Autocomplete implementation put here
-        $parentId = new Select(
-
-            'parentId',
-            Employees::find(['columns' => "id, CONCAT(firstName, ' ', lastName) as fullName"]),
-            [
-                'using' => ['id', 'fullName'],
-                'useEmpty' => true,
-                'emptyValue' => 0
-            ]
-            );
+        $parentId = new Autocomplete('parentId', ['placeholder' => 'Enter chief name for searching', 'size' => 40]);
         $this->add($parentId);
     }
 }

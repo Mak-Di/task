@@ -54,6 +54,11 @@ class EmployeeController extends \Phalcon\Mvc\Controller
      */
     public function addAction()
     {
+        $this->assets
+            ->addJs('//code.jquery.com/ui/1.11.4/jquery-ui.js')
+            ->addJs('js/autocomplete.js')
+            ->addCss('//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css');
+
         $this->view->setVar('form', new Employee());
 
         if ($this->request->isPost()) {
@@ -64,7 +69,7 @@ class EmployeeController extends \Phalcon\Mvc\Controller
             $employee->email = $this->request->getPost('email', 'email');
             $employee->phone = $this->request->getPost('phone', 'int');
             $employee->note = $this->request->getPost('note');
-            $employee->parentId = $this->request->getPost('parentId', 'int');
+            $employee->parentId = $this->request->getPost('selectorStorage', 'int');
 
             if ($employee->save()) {
                 $this->response->redirect('employee');
