@@ -1,5 +1,15 @@
 {{ link_to('/', 'Home') }}
 
+{{ search.render() }} <br>
+
+<script>
+    $(function() {
+       $("#selectorStorage").change(function () {
+           location.href = '/employee/show/?eid=' + $("#selectorStorage").val()
+       });
+    });
+</script>
+
 <table border="1px" width="90%">
     <tr>
         <th>Fist name</th>

@@ -1,9 +1,4 @@
 $(function() {
-    function setData( event, ui ) {
-        event.preventDefault();
-        $( "#selector" ).val(ui.item.label);
-        $( "#selectorStorage" ).val(ui.item.value);
-    };
     $( "#selector" ).autocomplete({
         source: function( request, response ) {
             $.ajax({
@@ -18,7 +13,14 @@ $(function() {
             });
         },
         minLength: 3,
-        select: setData,
-        focus: setData
+        select: function (event, ui) {
+            event.preventDefault();
+            $( "#selector" ).val(ui.item.label);
+            $( "#selectorStorage" ).val(ui.item.value).change();
+        },
+        focus: function (event, ui) {
+            event.preventDefault();
+            $( "#selector" ).val(ui.item.label);
+        }
     });
 });

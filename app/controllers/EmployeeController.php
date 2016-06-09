@@ -81,15 +81,23 @@ class EmployeeController extends \Phalcon\Mvc\Controller
      */
     public function showAction($page = 0)
     {
+        $this->assets
+            ->addJs('//code.jquery.com/ui/1.11.4/jquery-ui.js')
+            ->addJs('js/autocomplete.js')
+            ->addCss('//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css');
+
+        $employeeId = $this->request->getQuery('eid', 'int', 0);
         $paginator   = new PaginatorModel(
             array(
-                "builder"  => Employees::findWithChiefName(),
+                "builder"  => Employees::findWithChiefName($employeeId),
                 "limit" => 5,
                 "page"  => $page
             )
         );
 
+        $searchElement = new Autocomplete('search', ['placeholder' => 'Search by full name']);
         $this->view->setVar('paginator', $paginator->getPaginate());
+        $this->view->setVar('search', $searchElement);
     }
 
     /**
@@ -135,5 +143,28 @@ class EmployeeController extends \Phalcon\Mvc\Controller
             $employee->delete();
 
         $this->response->redirect('employee/show/' . $page);
+    }
+
+    /**
+     * Return search result by full employee name in json format
+     * 
+     * @return \Phalcon\Http\Response
+     */
+    public function searchAction()
+    {
+        $this->view->disable();
+        $response = new \Phalcon\Http\Response();
+        $response->setContentType('application/json', 'UTF-8');
+        $searchName = $this->request->getQuery('name');
+        $result = [];
+        foreach (Employees::searchByFullName($searchName) as $employee) {
+            $result[] = [
+                'value' => $employee->id,
+                'label' => $employee->fullName
+            ];
+        }
+        $response->setContent(json_encode($result));
+
+        return $response;
     }
 }

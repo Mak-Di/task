@@ -2,6 +2,8 @@
 
 use Phalcon\Mvc\Model\Validator\Email as Email;
 use Phalcon\Mvc\Model\Query\Builder;
+use Phalcon\Filter;
+use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 
 class Employees extends \Phalcon\Mvc\Model
 {
@@ -156,24 +158,31 @@ class Employees extends \Phalcon\Mvc\Model
     }
 
     /**
+     * @param int $employeeId
      * @return Builder
      */
-    public static function findWithChiefName()
+    public static function findWithChiefName($employeeId = 0)
     {
         $queryBuilder = new Builder();
-        return $queryBuilder
+        $queryBuilder
             ->from('Employees')
             ->columns([
-                'id' => 'Employees.id',
-                'firstName' => 'Employees.firstName',
-                'lastName' => 'Employees.lastName',
-                'position' => 'Employees.position',
-                'email' => 'Employees.email',
-                'phone' => 'Employees.phone',
-                'note' => 'Employees.note',
+                'Employees.id',
+                'Employees.firstName',
+                'Employees.lastName',
+                'Employees.position',
+                'Employees.email',
+                'Employees.phone',
+                'Employees.note',
                 'chiefName' => 'CONCAT(e.firstName, " ", e.lastName)'
             ])
             ->leftJoin('Employees', 'Employees.parentId = e.id', 'e');
+
+        if ($employeeId > 0) {
+            $queryBuilder->where('Employees.id = :id:', ['id' => $employeeId]);
+        }
+
+        return $queryBuilder;
     }
 
     /**
@@ -208,4 +217,23 @@ class Employees extends \Phalcon\Mvc\Model
 
         }
     }
+
+    /**
+     * Search by full name
+     * 
+     * @param $query
+     * @return Resultset
+     */
+    public static function searchByFullName($query)
+    {
+        $filter = new Filter();
+        $employees = new Employees();
+        $query = $filter->sanitize($query, 'alphanum');
+        $sql = "SELECT id, CONCAT(first_name, ' ', last_name) as fullName 
+                FROM employees 
+                WHERE MATCH(first_name, last_name) AGAINST ( ? IN BOOLEAN MODE)";
+
+        return new Resultset(null, $employees, $employees->getReadConnection()->query($sql, [$query . '*']));
+    }
+
 }
