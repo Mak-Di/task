@@ -40,7 +40,7 @@ class EmployeeController extends \Phalcon\Mvc\Controller
                 'isFolder' => $employee->isChief(),
                 'isExpanded' => $employee->isChief(),
                 'isLazy' => true,
-                'text' => $escaper->escapeHtml($employee->firstName.' ' . $employee->lastName),
+                'text' => $escaper->escapeHtml($employee->getFullName()),
                 'lazyUrl' => '/employee/treeview/' . $employee->id
             ];
         }
@@ -117,7 +117,7 @@ class EmployeeController extends \Phalcon\Mvc\Controller
             ->addJs('//code.jquery.com/ui/1.11.4/jquery-ui.js')
             ->addJs('js/autocomplete.js')
             ->addCss('//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css');
-        
+
         $this->view->setVar('form', new Employee(Employees::findFirst($employeeId)));
         $this->view->setVar('id', $employeeId);
         $this->view->setVar('page', $page);
