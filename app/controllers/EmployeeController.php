@@ -123,19 +123,23 @@ class EmployeeController extends \Phalcon\Mvc\Controller
         $this->view->setVar('page', $page);
 
         if ($this->request->isPost()) {
-            $employee = Employees::findFirst($employeeId);
-            $employee->firstName = $this->request->getPost('firstName', 'string');
-            $employee->lastName = $this->request->getPost('lastName', 'string');
-            $employee->position = $this->request->getPost('position', 'string');
-            $employee->email = $this->request->getPost('email', 'email');
-            $employee->phone = $this->request->getPost('phone', 'int');
-            $employee->note = $this->request->getPost('note');
-            $employee->parentId = $this->request->getPost('selectorStorage', 'int');
+            try {
+                $employee = Employees::findFirst($employeeId);
+                $employee->firstName = $this->request->getPost('firstName', 'string');
+                $employee->lastName = $this->request->getPost('lastName', 'string');
+                $employee->position = $this->request->getPost('position', 'string');
+                $employee->email = $this->request->getPost('email', 'email');
+                $employee->phone = $this->request->getPost('phone', 'int');
+                $employee->note = $this->request->getPost('note');
+                $employee->parentId = $this->request->getPost('selectorStorage', 'int');
 
-            if ($employee->save()) {
-                $this->response->redirect('employee/show/' . $page);
-            } else {
-                $this->view->setVar('errorMsg', $employee->getMessages());
+                if ($employee->save()) {
+                    $this->response->redirect('employee/show/' . $page);
+                } else {
+                    $this->view->setVar('errorMsg', $employee->getMessages());
+                }
+            } catch (Exception $e) {
+                $this->view->setVar('errorMsg', $e->getMessage());
             }
         }        
     }

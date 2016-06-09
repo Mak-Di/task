@@ -200,9 +200,10 @@ class Employees extends \Phalcon\Mvc\Model
      */
     public function afterCreate()
     {
-        $parent = Employees::findFirst($this->parentId);
-        $parent->isChief = 1;
-        $parent->save();
+        if ($parent = $this->getParent()) {
+            $parent->isChief = 1;
+            $parent->save();
+        }
     }
 
     /**
@@ -220,7 +221,7 @@ class Employees extends \Phalcon\Mvc\Model
                     $parent->save();
                 }
             } else {
-                $parent = Employees::findFirst($this->parentId);
+                $parent = $this->getParent();
                 $parent->isChief = 1;
                 $parent->save();
             }
@@ -253,6 +254,7 @@ class Employees extends \Phalcon\Mvc\Model
      */
     public function setParentId($parentId)
     {
+        $this->checkRelationship($parentId, $this->id);
         $this->parentId = $parentId;
     }
 
@@ -284,5 +286,28 @@ class Employees extends \Phalcon\Mvc\Model
     public function getFullName()
     {
         return $this->firstName . ' ' . $this->lastName;
+    }
+
+    /**
+     * @param $newParentId
+     * @param $originalId
+     * @return bool
+     */
+    protected function checkRelationship($newParentId, $originalId)
+    {
+        // Skip check for new employee
+        if ($originalId === null) {
+            return true;
+        }
+
+        if ($newParent = Employees::findFirst($newParentId)) {
+            if ($newParent->parentId == 0) {
+                return true;
+            }
+            if ($newParent->parentId == $originalId) {
+                throw new \InvalidArgumentException('You cannot assign to a subordinate');
+            }
+            $newParent->checkRelationship($newParent->parentId, $originalId);
+        }
     }
 }

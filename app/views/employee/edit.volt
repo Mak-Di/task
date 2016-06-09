@@ -2,9 +2,13 @@
 
 {% if errorMsg IS DEFINED %}
     <div class="errorMsg">
-        {% for error in errorMsg %}
-            {{ error.getMessage() }}
-        {% endfor %}
+        {% if errorMsg is iterable %}
+            {% for error in errorMsg %}
+                {{ error.getMessage() }}
+            {% endfor %}
+        {% else %}
+            {{ errorMsg }}
+        {% endif %}
     </div>
 {% endif %}
 
