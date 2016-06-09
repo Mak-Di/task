@@ -4,6 +4,7 @@ use Phalcon\Mvc\Model\Validator\Email as Email;
 use Phalcon\Mvc\Model\Query\Builder;
 use Phalcon\Filter;
 use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
+use Phalcon\Mvc\Model\Validator\Uniqueness;
 
 class Employees extends \Phalcon\Mvc\Model
 {
@@ -74,6 +75,15 @@ class Employees extends \Phalcon\Mvc\Model
                 array(
                     'field'    => 'email',
                     'required' => true,
+                )
+            )
+        );
+
+        $this->validate(
+            new Uniqueness(
+                array(
+                    "field"   => "email",
+                    "message" => "Employee with current email already exists"
                 )
             )
         );
@@ -235,5 +245,4 @@ class Employees extends \Phalcon\Mvc\Model
 
         return new Resultset(null, $employees, $employees->getReadConnection()->query($sql, [$query . '*']));
     }
-
 }
