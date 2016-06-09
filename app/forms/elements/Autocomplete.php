@@ -24,8 +24,8 @@ class Autocomplete extends Element
      */
     public function render($attributes = null)
     {
-        $selector = new Text('selector', $this->getAttributes());
-        $selectorStorage = new Hidden('selectorStorage');
+        $selector = new Text('selector', $this->getAttribute('selector'));
+        $selectorStorage = new Hidden('selectorStorage', $this->getAttribute('selectorStorage'));
 
         return '<div class="ui-widget">' . $selector->render() . $selectorStorage->render() . '</div>';
     }

@@ -61,7 +61,7 @@ class Employees extends \Phalcon\Mvc\Model
      *
      * @var integer
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * Validations and business logic
@@ -244,5 +244,45 @@ class Employees extends \Phalcon\Mvc\Model
                 WHERE MATCH(first_name, last_name) AGAINST ( ? IN BOOLEAN MODE)";
 
         return new Resultset(null, $employees, $employees->getReadConnection()->query($sql, [$query . '*']));
+    }
+
+    /**
+     * Set parent id
+     * 
+     * @param $parentId
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
+    }
+
+    /**
+     * Get parent id
+     * 
+     * @return int
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * Get parent
+     * 
+     * @return Employees
+     */
+    public function getParent()
+    {
+        return Employees::findFirst($this->parentId);
+    }
+
+    /**
+     * Get full name
+     * 
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 }

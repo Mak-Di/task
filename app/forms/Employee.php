@@ -28,7 +28,21 @@ class Employee extends Form
         $note = new TextArea('note', ['placeholder' => 'Note']);
         $this->add($note);
 
-        $parentId = new Autocomplete('parentId', ['placeholder' => 'Enter chief name for searching', 'size' => 40]);
+        $parentFullName = '';
+        if ($parent = $this->getEntity()->getParent()) {
+            $parentFullName = $parent->getFullName();
+        }
+        $parentId = new Autocomplete(
+            'parentId',
+            [
+                'selector' => [
+                    'placeholder' => 'Enter chief name for searching',
+                    'size' => 40,
+                    'value' => $parentFullName
+                ],
+                'selectorStorage' => ['value' => $this->getEntity()->getParentId()]
+            ]
+        );
         $this->add($parentId);
     }
 }

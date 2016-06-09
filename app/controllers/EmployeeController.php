@@ -113,6 +113,11 @@ class EmployeeController extends \Phalcon\Mvc\Controller
      */
     public function editAction($employeeId = 0, $page = 0)
     {
+        $this->assets
+            ->addJs('//code.jquery.com/ui/1.11.4/jquery-ui.js')
+            ->addJs('js/autocomplete.js')
+            ->addCss('//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css');
+        
         $this->view->setVar('form', new Employee(Employees::findFirst($employeeId)));
         $this->view->setVar('id', $employeeId);
         $this->view->setVar('page', $page);
@@ -125,7 +130,7 @@ class EmployeeController extends \Phalcon\Mvc\Controller
             $employee->email = $this->request->getPost('email', 'email');
             $employee->phone = $this->request->getPost('phone', 'int');
             $employee->note = $this->request->getPost('note');
-            $employee->parentId = $this->request->getPost('parentId', 'int');
+            $employee->parentId = $this->request->getPost('selectorStorage', 'int');
 
             if ($employee->save()) {
                 $this->response->redirect('employee/show/' . $page);
