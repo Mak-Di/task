@@ -29,9 +29,14 @@ class Employee extends Form
         $this->add($note);
 
         $parentFullName = '';
-        if ($parent = $this->getEntity()->getParent()) {
-            $parentFullName = $parent->getFullName();
+        $parentId = 0;
+        if ($this->getEntity()) {
+            if ($parent = $this->getEntity()->getParent()) {
+                $parentFullName = $parent->getFullName();
+            }
+            $parentId = $this->getEntity()->getParentId();
         }
+
         $parentId = new Autocomplete(
             'parentId',
             [
@@ -40,7 +45,7 @@ class Employee extends Form
                     'size' => 40,
                     'value' => $parentFullName
                 ],
-                'selectorStorage' => ['value' => $this->getEntity()->getParentId()]
+                'selectorStorage' => ['value' => $parentId]
             ]
         );
         $this->add($parentId);
